@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+{{ super() }}
+<h1 class="fam">Fam Vahtras bibliotek</h1>
+<table class="table table-striped" id="data">
+    <thead>
+        <tr>
+            <th>📷</th><th>Författare</th><th>Titel</th><th>Serie</th><th>Hylla</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for book in books %}
+        <tr>
+            <td>
+    {% if book.image %}
+    <img src="data:image/jpeg;base64,{{ encode(book.image.thumbnail.read()).decode() }}">
+    {% endif %}
+            </td>
+            <td> {{ book.authors.0.last }}, {{ book.authors.0.first }} </td>
+            <td><i>{{ book.title.split(':')[0] }}</i></td>
+            <td>
+                {% if book.series %}
+                    {{ book.series.title }} {{ book.series.volume }}
+                {% endif %}
+            </td>
+            <td>
+                {% if book.hylla %}{{ book.hylla }}{% endif %}
+            </td>
+        </tr>
+{% endfor %}
+    </tbody>
+{% endblock %}

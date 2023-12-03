@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+{{ super() }}
+
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row">
+    <div class="col">
+        <!--{{ form.title.label(class='form-label') }}-->
+        {{ form.title(class='form-control', placeholder="Titel") }}
+    </div>
+    <div class="col">
+        {{ form.composer(class='form-control', placeholder='Tonsättare') }}
+        <div id="authorHelp" class="form-text">Efternamn, Förnamn</div>
+    </div>
+    <div class="col">
+        {{ form.parts(class='form-control', placeholder="SATB...") }}
+    </div>
+    <div class="col">
+    <button type="submit" class="btn btn-light">Sök</button>
+    </div>
+    </div>
+</form>
+
+{% if sheets %}
+<table class="table table-striped" id="data">
+    <thead>
+        <tr>
+            <th>📷</th><th>Tonsättare</th><th>Titel</th><th>Besättning</th><th>Var</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for sheet in sheets %}
+        <tr>
+            <td>
+            </td>
+            <td> 
+                {% for composer in sheet.composers %}
+                    {% if composer.first %}
+                    {{ composer.last }}, {{ composer.first }}<br>
+                    {% else %}
+                    {{ composer.last }}<br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <i>{{ sheet.title.split(':')[0] }}</i><br>
+                {% if ':' in sheet.title %}
+                    <i><small>{{ sheet.title.split(':')[1] }}</small></i>
+                {% endif %}
+            <td>
+                {{ sheet.parts }}
+            </td>
+            <td>
+                {% if sheet.location %}{{ sheet.location }}{% endif %}
+            </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
+
