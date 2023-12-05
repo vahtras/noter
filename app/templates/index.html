@@ -7,12 +7,14 @@
     {{ form.hidden_tag() }}
     <div class="row">
     <div class="col">
-        <!--{{ form.title.label(class='form-label') }}-->
-        {{ form.title(class='form-control', placeholder="Titel") }}
     </div>
     <div class="col">
         {{ form.composer(class='form-control', placeholder='Tonsättare') }}
         <div id="authorHelp" class="form-text">Efternamn, Förnamn</div>
+    </div>
+    <div class="col">
+        <!--{{ form.title.label(class='form-label') }}-->
+        {{ form.title(class='form-control', placeholder="Titel") }}
     </div>
     <div class="col">
         {{ form.parts(class='form-control', placeholder="SATB...") }}
