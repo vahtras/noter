@@ -1,6 +1,7 @@
 import io
 from unittest.mock import patch
-import pytest
+
+import pandas as pd
 
 from app.models import SheetMusic, Composer
 
@@ -64,3 +65,13 @@ Magnificat,Pärt,SSATB,S,,Latin
         sheets = sma.import_csv(finp)
 
     assert sheets[0].title == "Magnificat"
+
+def test_import_gss(sma):
+    gdoc = (
+        'https://docs.google.com/spreadsheets/d/'
+        '1D4UoThfcQSELBqfAomB9UY-SGzAEsHMYEEg270D-b18/'
+        'export?format=csv'
+    )
+    sheets = sma.import_gss(gdoc)
+    assert sheets[0].title == 'Magnificat'
+

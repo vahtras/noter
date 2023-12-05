@@ -1,5 +1,7 @@
 import csv
 
+import pandas as pd
+
 from mongoengine import (
     register_connection,
     Document,
@@ -78,6 +80,31 @@ class SheetMusicArchive:
             )
          except KeyError:
              breakpoint()
+
+        for sm in new_sheets:
+            sm.save()
+
+        return new_sheets
+
+    def import_gss(self, url):
+        df = pd.read_csv(url)
+        df = df.fillna("")
+
+        new_sheets = []
+        for _, rec in df.iterrows():
+            try:
+                new_sheets.append(
+                    SheetMusic(
+                        title=rec["Titel"],
+                        composers=[Composer.from_comma_string(rec["Tonsättare"])],
+                        parts=rec["Besättning"],
+                        soloist=rec["Solist"],
+                        instruments=rec["Instrument"],
+                        language=rec["Språk"],
+                    )
+                )
+            except KeyError:
+                 breakpoint()
 
         for sm in new_sheets:
             sm.save()
