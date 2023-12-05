@@ -19,6 +19,7 @@ menu = """
         drop [d]
         import [i]
         list [l]
+        reload gss [r]
 """
 
 try:
@@ -35,6 +36,10 @@ try:
             print()
             for s in SheetMusic.objects():
                 print(s)
+        if action[0] == 'r':
+            print()
+            url = os.environ.get('URL')
+            sma.import_gss(url)
 
 except EOFError:
     print("Done")
