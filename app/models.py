@@ -7,6 +7,7 @@ from mongoengine import (
     Document,
     EmbeddedDocument,
     EmbeddedDocumentField,
+    FileField,
     IntField,
     ListField,
     StringField,
@@ -39,6 +40,7 @@ class SheetMusic(Document):
     instruments = StringField()
     language = StringField()
     location = StringField()
+    pdf = FileField()
     meta = {'collection': 'noter'}
 
     def __repr__(self):
@@ -107,6 +109,10 @@ class SheetMusicArchive:
                  breakpoint()
 
         for sm in new_sheets:
-            sm.save()
+            if SheetMusic.objects(title=sm.title):
+                print(f'{sm} exists')
+            else:
+                print(f'{sm} added')
+                sm.save()
 
         return new_sheets

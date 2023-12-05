@@ -29,13 +29,19 @@
 <table class="table table-striped" id="data">
     <thead>
         <tr>
-            <th>📷</th><th>Tonsättare</th><th>Titel</th><th>Besättning</th><th>Var</th>
+            <th><img src="/static/file-pdf.svg"></th>
+            <th>Tonsättare</th><th>Titel</th><th>Besättning</th><th>Var</th>
         </tr>
     </thead>
     <tbody>
 {% for sheet in sheets %}
         <tr>
             <td>
+                {% if sheet.pdf %}
+                <a href="foo.pdf">
+                    <img src="/static/file-pdf.svg">
+                </a>
+                {% endif %}
             </td>
             <td> 
                 {% for composer in sheet.composers %}
