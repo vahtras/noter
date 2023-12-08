@@ -11,7 +11,21 @@ from mongoengine import (
     IntField,
     ListField,
     StringField,
+    ValidationError
 )
+
+TRANSLATIONS = {
+    'Titel': 'title',
+    'År': 'year',
+    'Tonsättare': 'composers',
+    'Text': 'lyrics',
+    'Arr': 'arrangement',
+    'Besättning': 'parts',
+    'Solist': 'soloist',
+    'Instrument': 'instruments',
+    'Språk': 'language',
+    'Placering': 'location',
+}
 
 
 class Composer(EmbeddedDocument):
@@ -34,12 +48,15 @@ class Composer(EmbeddedDocument):
 
 class SheetMusic(Document):
     title = StringField(required=True)
+    year = IntField()
     composers = ListField(EmbeddedDocumentField(Composer))
+    lyrics = StringField(default="")
+    arrangement = StringField(default="")
     parts = StringField()
     soloist = StringField()
     instruments = StringField()
     language = StringField()
-    location = StringField()
+    location = StringField(default="")
     pdf = FileField()
     meta = {'collection': 'noter'}
 
@@ -51,12 +68,12 @@ class SheetMusic(Document):
 
 class SheetMusicArchive:
 
-    def __init__(self, dbname=None):
+    def __init__(self, dbname='default'):
         self.dbname = dbname
         self.connect()
 
     def __repr__(self):
-        self.dbname
+        return self.dbname
 
     def connect(self):
         self.connection = register_connection(
@@ -88,31 +105,44 @@ class SheetMusicArchive:
 
         return new_sheets
 
-    def import_gss(self, url):
+    def import_gss(self, url: str) -> list[SheetMusic]:
+        """
+        Read Google spreadsheet to list of SheetMusic objects for further
+        processing
+        """
         df = pd.read_csv(url)
-        df = df.fillna("")
+        df.columns = [TRANSLATIONS[h]for h in df.columns]
 
         new_sheets = []
         for _, rec in df.iterrows():
+            rec = rec.dropna()
+            rec['composers'] = [Composer.from_comma_string(rec['composers'])]
             try:
                 new_sheets.append(
-                    SheetMusic(
-                        title=rec["Titel"],
-                        composers=[Composer.from_comma_string(rec["Tonsättare"])],
-                        parts=rec["Besättning"],
-                        soloist=rec["Solist"],
-                        instruments=rec["Instrument"],
-                        language=rec["Språk"],
-                    )
+                    SheetMusic(**rec)
                 )
-            except KeyError:
-                 breakpoint()
+            except KeyError as ke:
+                print(ke)
+                print(rec)
+                breakpoint()
 
+        return new_sheets
+
+    def save_sheets(new_sheets: list[SheetMusic]) -> None:
+        """
+        Save modified sheets to db
+        """
         for sm in new_sheets:
             if SheetMusic.objects(title=sm.title):
                 print(f'{sm} exists')
             else:
                 print(f'{sm} added')
-                sm.save()
+                try:
+                    sm.save()
+                except ValidationError as ve:
+                    print(ve)
+                    breakpoint()
 
-        return new_sheets
+    def delete_sheets(self, **pattern):
+        for sheet in SheetMusic.objects(**pattern):
+            sheet.delete()

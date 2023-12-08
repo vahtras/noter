@@ -21,7 +21,7 @@ def index():
 
         if form.composer.data:
             if "," in form.composer.data:
-                last, first = (_.strip() for _ in form.author.data.split(','))
+                last, first = (_.strip() for _ in form.composer.data.split(','))
             else:
                 last = form.composer.data.strip()
                 first = ""

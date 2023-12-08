@@ -20,7 +20,7 @@
         {{ form.parts(class='form-control', placeholder="SATB...") }}
     </div>
     <div class="col">
-    <button type="submit" class="btn btn-light">Sök</button>
+    <button type="submit" class="btn btn-warning">Sök</button>
     </div>
     </div>
 </form>
@@ -30,7 +30,13 @@
     <thead>
         <tr>
             <th><img src="/static/file-pdf.svg"></th>
-            <th>Tonsättare</th><th>Titel</th><th>Besättning</th><th>Var</th>
+            <th>Tonsättare</th>
+            <th>Titel</th>
+            <th>År</th>
+            <th>Text</th>
+            <th>Arr</th>
+            <th>Besättning</th>
+            <th>Placering</th>
         </tr>
     </thead>
     <tbody>
@@ -57,12 +63,12 @@
                 {% if ':' in sheet.title %}
                     <i><small>{{ sheet.title.split(':')[1] }}</small></i>
                 {% endif %}
-            <td>
-                {{ sheet.parts }}
             </td>
-            <td>
-                {% if sheet.location %}{{ sheet.location }}{% endif %}
-            </td>
+            <td>{% if sheet.year %}{{ sheet.year }}{% endif %}</td>
+            <td>{{ sheet.lyrics }}</td>
+            <td>{{ sheet.arrangement }}</td>
+            <td>{{ sheet.parts }}</td>
+            <td>{{ sheet.location }}</td>
         </tr>
 {% endfor %}
     </tbody>

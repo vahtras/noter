@@ -48,10 +48,18 @@ def test_sheet_to_db(mongodb, sma):
     new = SheetMusic.objects().first()
     assert new.title == "Magnificat"
 
-def test_sheet_location():
+def test_sheet_location(sma):
     SheetMusic(title="Magnificat", location="Folder").save()
     search = SheetMusic.objects(location="Folder").first()
     assert search.title == "Magnificat"
+
+def test_sheet_update_location(sma):
+    SheetMusic(title="Magnificat", location="Folder").save()
+    old = SheetMusic.objects(title="Magnificat").first()
+    old.location = 'Gone'
+    old.save()
+    new = SheetMusic.objects(title="Magnificat").first()
+    assert new.location == 'Gone'
 
 
 def test_import_csv_new(sma):
@@ -75,3 +83,8 @@ def test_import_gss(sma):
     sheets = sma.import_gss(gdoc)
     assert sheets[0].title == 'Magnificat'
 
+def test_delete_title(sma):
+    sm = SheetMusic(title='foo').save()
+    assert len(SheetMusic.objects()) == 1
+    sma.delete_sheets(id=sm.id)
+    assert len(SheetMusic.objects()) == 0
