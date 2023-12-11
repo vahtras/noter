@@ -1,6 +1,8 @@
 import csv
 
 import pandas as pd
+import rich.table
+import rich.console
 
 from mongoengine import (
     register_connection,
@@ -146,3 +148,12 @@ class SheetMusicArchive:
     def delete_sheets(self, **pattern):
         for sheet in SheetMusic.objects(**pattern):
             sheet.delete()
+
+    def table_sheets(self, **pattern):
+        table = rich.table.Table()
+        table.add_column('Titel')
+        table.add_column('Tonsättare')
+        for sheet in SheetMusic.objects(**pattern):
+            table.add_row(sheet.title, sheet.composers[0].last)
+        console = rich.console.Console()
+        console.print(table)

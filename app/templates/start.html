@@ -1,31 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 {{ super() }}
-<h1 class="fam">Fam Vahtras bibliotek</h1>
+<h1 class="fam">Fam Vahtras notbibliotek</h1>
 <table class="table table-striped" id="data">
     <thead>
         <tr>
-            <th>📷</th><th>Författare</th><th>Titel</th><th>Serie</th><th>Hylla</th>
+            <th><img src="/static/file-pdf.svg"></th>
+            <th>Tonsättare</th>
+            <th>Titel</th>
+            <th>År</th>
+            <th>Text</th>
+            <th>Arr</th>
+            <th>Besättning</th>
+            <th>Placering</th>
         </tr>
     </thead>
     <tbody>
-{% for book in books %}
+{% for sheet in sheets %}
         <tr>
             <td>
-    {% if book.image %}
-    <img src="data:image/jpeg;base64,{{ encode(book.image.thumbnail.read()).decode() }}">
+    {% if sheet.pdf %}
+        <img src="/static/file-pdf.svg">
     {% endif %}
             </td>
-            <td> {{ book.authors.0.last }}, {{ book.authors.0.first }} </td>
-            <td><i>{{ book.title.split(':')[0] }}</i></td>
-            <td>
-                {% if book.series %}
-                    {{ book.series.title }} {{ book.series.volume }}
-                {% endif %}
-            </td>
-            <td>
-                {% if book.hylla %}{{ book.hylla }}{% endif %}
-            </td>
+            <td> {{ sheet.composers.0.last }}, {{ sheet.composers.0.first }} </td>
+            <td><i>{{ sheet.title.split(':')[0] }}</i></td>
+            <td>{{ sheet.year }}</td>
+            <td><i>{{ sheet.lyrics }}</i></td>
+            <td>{{ sheet.arrangement }}</td>
+            <td>{{ sheet.parts }}</td>
+            <td>{{ sheet.placement }}</td>
         </tr>
 {% endfor %}
     </tbody>

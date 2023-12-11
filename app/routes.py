@@ -54,8 +54,12 @@ def index():
 @app.route('/api')
 def api():
     print(flask.request.args)
-    filters = {k: v for k, v in flask.request.args.items() if k in ['hylla', 'title']}
+    filters = {
+        k: v
+        for k, v in flask.request.args.items()
+        if k in ['title', 'year', 'parts']
+    }
     if 'last' in flask.request.args:
         filters['composers__0__last'] = flask.request.args['last']
-    books = SheetMusic.objects(**filters)
-    return flask.render_template('start.html', books=books, encode=base64.b64encode)
+    sheets = SheetMusic.objects(**filters)
+    return flask.render_template('start.html', sheets=sheets, encode=base64.b64encode)

@@ -33,9 +33,7 @@ try:
             with open(csv_file) as f:
                 sheets = sma.import_csv(f)
         if action[0] == 'l':
-            print()
-            for s in SheetMusic.objects():
-                print(s)
+            sma.table_sheets()
         if action[0] == 'r':
             print()
             url = os.environ.get('URL')
