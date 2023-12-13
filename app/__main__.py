@@ -37,7 +37,8 @@ try:
         if action[0] == 'r':
             print()
             url = os.environ.get('URL')
-            sma.import_gss(url)
+            sheets = sma.import_gss(url)
+            sma.save_sheets(sheets)
 
 except EOFError:
     print("Done")

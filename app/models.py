@@ -130,7 +130,7 @@ class SheetMusicArchive:
 
         return new_sheets
 
-    def save_sheets(new_sheets: list[SheetMusic]) -> None:
+    def save_sheets(self, new_sheets: list[SheetMusic]) -> None:
         """
         Save modified sheets to db
         """
@@ -152,8 +152,27 @@ class SheetMusicArchive:
     def table_sheets(self, **pattern):
         table = rich.table.Table()
         table.add_column('Titel')
+        table.add_column('År')
         table.add_column('Tonsättare')
+        table.add_column('Text')
+        table.add_column('Arr')
+        table.add_column('Besättning')
+        table.add_column('Soloist')
+        table.add_column('Instrument')
+        table.add_column('Språk')
+        table.add_column('Placering')
         for sheet in SheetMusic.objects(**pattern):
-            table.add_row(sheet.title, sheet.composers[0].last)
+            table.add_row(
+                sheet.title,
+                str(sheet.year) if sheet.year else "",
+                sheet.composers[0].last + ", " + sheet.composers[0].first,
+                sheet.lyrics,
+                sheet.arrangement,
+                sheet.parts,
+                sheet.soloist,
+                sheet.instruments,
+                sheet.language,
+                sheet.location,
+            )
         console = rich.console.Console()
         console.print(table)
