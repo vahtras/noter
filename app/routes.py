@@ -46,6 +46,14 @@ def index():
 
             patterns.update(composer_pattern)
 
+        if form.parts.data:
+            parts_pattern = re.compile(form.parts.data.strip(), re.IGNORECASE)
+            patterns.update({'parts': parts_pattern})
+
+        if form.language.data:
+            language_pattern = re.compile(form.language.data.strip(), re.IGNORECASE)
+            patterns.update({'language': language_pattern})
+
         sheets = SheetMusic.objects(**patterns)
     return flask.render_template(
         'index.html', form=form, sheets=sheets, encode=base64.b64encode
@@ -63,3 +71,9 @@ def api():
         filters['composers__0__last'] = flask.request.args['last']
     sheets = SheetMusic.objects(**filters)
     return flask.render_template('start.html', sheets=sheets, encode=base64.b64encode)
+
+
+@app.route('/rad/<row_id>')
+def row(row_id: int):
+    sheet = SheetMusic.objects(row_id=row_id).first()
+    return flask.render_template('sheet.html', sheet=sheet)

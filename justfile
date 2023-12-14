@@ -2,4 +2,7 @@ default:
     @just --list
 
 list:
-    python -c "from app.models import SheetMusicArchive as notbib; notbib('vahtras').table_sheets()"
+    python -c "import app.models; sma=app.models.SheetMusicArchive('$NOTER'); sma.table_sheets()"
+
+import:
+    python -c "import app.models; sma=app.models.SheetMusicArchive('$NOTER'); sma.save_sheets(sma.import_gss('$URL'))"

@@ -3,7 +3,7 @@ import mongomock
 import mongomock.gridfs
 import pytest
 
-from app.models import SheetMusicArchive
+from app.models import SheetMusicArchive, SheetMusic
 
 @pytest.fixture(scope='session')
 def connection():
@@ -21,4 +21,5 @@ def connection():
 def sma(connection):
     sma = SheetMusicArchive()
     sma.connection = connection
+    SheetMusic.drop_collection()
     yield sma

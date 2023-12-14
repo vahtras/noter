@@ -75,13 +75,39 @@ Magnificat,Pärt,SSATB,S,,Latin
     assert sheets[0].title == "Magnificat"
 
 def test_import_gss(sma):
-    gdoc = (
-        'https://docs.google.com/spreadsheets/d/'
-        '1D4UoThfcQSELBqfAomB9UY-SGzAEsHMYEEg270D-b18/'
-        'export?format=csv'
-    )
-    sheets = sma.import_gss(gdoc)
+    with patch('app.models.pd.read_csv') as mock_pd:
+        mock_pd.return_value = pd.DataFrame(
+            {
+                'Titel': ['Magnificat'],
+                'Tonsättare': ['Pärt, Arvo'],
+            },
+        )
+        sheets = sma.import_gss("url")
     assert sheets[0].title == 'Magnificat'
+    sma.save_sheets(sheets)
+    sheet = SheetMusic.objects(title='Magnificat').first()
+    assert sheet.composers == sheets[0].composers
+
+def test_update_gss_new_row(sma):
+    with patch('app.models.pd.read_csv') as mock_pd:
+        mock_pd.return_value = pd.DataFrame(
+            {
+                'Titel': ['Magnificat'],
+                'Tonsättare': ['Pärt, Arvo'],
+            },
+        )
+        sheets1 = sma.import_gss("url")
+
+    with patch('app.models.pd.read_csv') as mock_pd:
+        mock_pd.return_value = pd.DataFrame(
+            {
+                'Titel': ['Magnificat', 'Mässa i h-moll'],
+                'Tonsättare': ['Pärt, Arvo', 'Bach, J. S.'],
+            },
+        )
+        sheets2 = sma.import_gss("url")
+
+    assert sheets1[0].to_json() == sheets2[0].to_json()
 
 def test_delete_title(sma):
     sm = SheetMusic(title='foo').save()

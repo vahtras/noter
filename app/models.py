@@ -60,6 +60,7 @@ class SheetMusic(Document):
     language = StringField()
     location = StringField(default="")
     pdf = FileField()
+    row_id = IntField()
     meta = {'collection': 'noter'}
 
     def __repr__(self):
@@ -116,9 +117,10 @@ class SheetMusicArchive:
         df.columns = [TRANSLATIONS[h]for h in df.columns]
 
         new_sheets = []
-        for _, rec in df.iterrows():
+        for row, rec in df.iterrows():
             rec = rec.dropna()
             rec['composers'] = [Composer.from_comma_string(rec['composers'])]
+            rec['row_id'] = row + 2
             try:
                 new_sheets.append(
                     SheetMusic(**rec)
@@ -151,6 +153,7 @@ class SheetMusicArchive:
 
     def table_sheets(self, **pattern):
         table = rich.table.Table()
+        table.add_column(' 1')
         table.add_column('Titel')
         table.add_column('År')
         table.add_column('Tonsättare')
@@ -163,6 +166,7 @@ class SheetMusicArchive:
         table.add_column('Placering')
         for sheet in SheetMusic.objects(**pattern):
             table.add_row(
+                f'{sheet.row_id:2d}',
                 sheet.title,
                 str(sheet.year) if sheet.year else "",
                 sheet.composers[0].last + ", " + sheet.composers[0].first,
